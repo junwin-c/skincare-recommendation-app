@@ -1,0 +1,169 @@
+{% load i18n static stisla_tweaks %}<!DOCTYPE html>
+{% get_current_language as LANGUAGE_CODE %}{% get_current_language_bidi as LANGUAGE_BIDI %}
+<html lang="{{ LANGUAGE_CODE|default:"en-us" }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
+<head>
+  <title>{% block title %}{% endblock %}</title>
+  <meta charset="UTF-8">
+
+  <link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% static "admin/css/base.css" %}{% endblock %}">
+  
+  {% block extrastyle %}{% endblock %}
+  {% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% block stylesheet_rtl %}{% static "admin/css/rtl.css" %}{% endblock %}">{% endif %}
+  {% block extrahead %}{% endblock %}
+  {% block responsive %}
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">  
+
+    <link rel="stylesheet" type="text/css" href="{% static "admin/css/responsive.css" %}">
+    {% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% static "admin/css/responsive_rtl.css" %}">{% endif %}
+  {% endblock %}
+  {% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE">{% endblock %}
+
+  <!-- General CSS Files -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+  
+  <!-- Template CSS -->
+  <link rel="stylesheet" href="{% static "assets/css/style.css" %}">
+  <link rel="stylesheet" href="{% static "admin/assets/css/components.css" %}">
+  <link rel="stylesheet" href="{% static "admin/assets/css/custom.css" %}">
+  <link rel="stylesheet" href="{% static "admin/assets/css/extra.css" %}">
+
+  <!-- General JS Scripts -->
+  <script src="{% static "admin/assets/js/jquery-3.3.1.min.js" %}"></script>
+  <script src="{% static "admin/assets/js/bootstrap.min.js" %}"></script>
+    
+</head>
+
+{% load i18n %}
+
+<body class="">
+  <div class="navbar-bg"  style="color:#2B3A55;">
+  <nav class="navbar navbar-expand-md main-navbar bg-navbar">
+    <a class="navbar-brand" href="#">
+      <img src="{% static "assets/img/Logo-BINUS-University.jpg" %}" alt="Logo BINUS" width="100" height="80">
+    </a>
+    <div class="navbar-brand d-flex flex-fill justify-content-end ">
+      <span class="">Skincare Recommendation App</span>
+    </div>
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
+      <div class="navbar-nav ">
+        <a class="nav-link active" aria-current="page" href="#">Home</a>
+        <a class="nav-link" href="#">About</a>
+        <a class="nav-link" href="#">Contact</a>
+      </div>
+    </div>
+  </nav>
+  </div>
+
+  <div id="app">
+    <div class="main-wrapper">
+      <!-- Main Content -->
+      <div class="container">
+
+        <section class="section">
+          <!-- Upload File -->
+          <div class="container"> 
+            <div class="row mb-5">
+              <div class="col-4"><img src="{% static "admin/assets/img/example-image.jpg" %}" class="img-thumbnail preview-upload-image" alt="..."></div>
+              <div class="col">
+                <div class = "col">
+                  <div class="input-group mb-3">
+                    <div class="custom-file">
+                      <input type="file" class="custom-file-input" id="inputGroupFile02" accept=".jpg,.gif,.png">
+                      <label class="custom-file-label" for="inputGroupFile02" aria-describedby="inputGroupFileAddon02">Choose file</label>
+                    </div>
+                    <div class="input-group-append">
+                      <button class="btn btn-outline-secondary" type="button">Get Recommendation</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class = "col">
+                  <div class="card">
+                    <div class="card-body">
+                      <h5 class="card-title text-dark">Deskripsi Hasil Analisis Kulit: </h5>
+                      {% comment %} <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6> {% endcomment %}
+                      {% if skinDescription %}
+                      <p class="card-text">{{ skinDescription }}</p>
+                      {% else %}
+                      <p class="card-text text-secondary">no text</p>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="section-header mb-3">
+              {% block content_title %}{% if title %}<h1 class="h3 mb-0 text-dark">{{ title }}</h1>{% endif %}{% endblock %}
+            </div>
+
+            <div class = "row">
+              {% if products %}
+                {% for product in products %}
+                <div class="col mb-3">
+                  <div class="card" style="width: 18rem;">
+                    <img class="card-img-top" src="{% static product.imagePath %}" alt="Product Image">
+                    <div class="card-body">
+                      <h5 class="card-title">{{ product.name }}</h5>
+                      <p class="card-text">{{ product.description }}</p>
+                    </div>
+                  </div>
+                </div>
+                {% endfor %}
+              {% else %}
+              <div class="col text-center text-secondary"><p class="">No Product Recommendation - Upload Your Skin Image First</p></div>
+              {% endif %}
+            </div>
+          </div>
+        </section>
+      </div>
+
+      
+      <footer class="container main-footer">
+        <div class="row ">
+          <div class="col footer-left d-flex flex-row-reverse align-items-center border-right border-dark">
+            <img src="{% static "assets/img/Logo-BINUS-University.jpg" %}" alt="Logo BINUS" width="100" height="70">
+          </div>
+          <div class="col footer-right d-flex flex-column">
+            <span class="">Daniel Febrianto</span>
+            <span class="">Ida Ayu Chintya Ardhya Nareswari</span>
+            <span class="">Junwin Cong</span>
+            {% comment %} <table class="table table-sm table-borderless align-items-center">
+              <tbody>
+                <tr>
+                  <td class="align-middle">Daniel Febrianto</td>
+                </tr>
+                <tr>
+                  <td class="align-middle">Ida Ayu Chintya Ardhya Nareswari</td>
+                </tr>
+                <tr>
+                  <td class="align-middle">Junwin Cong</td>
+                </tr>              
+              </tbody>
+            </table> {% endcomment %}
+          </div>
+        </div>
+      </footer>
+    </div>
+  </div>
+  
+  <!-- Template JS File -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.nicescroll/3.7.6/jquery.nicescroll.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+  <script>
+    $('#inputGroupFile02').change(function(e){
+      if (e.target.files) {
+        var filePath = URL.createObjectURL(e.target.files[0]);
+        var fileName = e.target.files[0].name;
+        $('.custom-file-label').html(fileName);
+        $('.preview-upload-image').attr("src", filePath);
+      }
+    });
+  </script>
+  <script src="{% static "admin/assets/js/scripts.js" %}"></script>
+  <script src="{% static "admin/assets/js/custom.js" %}"></script>
+    
+</body>
+</html>
