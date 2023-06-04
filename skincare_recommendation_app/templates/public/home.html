@@ -64,29 +64,34 @@
           <!-- Upload File -->
           <div class="container"> 
             <div class="row mb-5">
-              <div class="col-4"><img src="{% static "admin/assets/img/example-image.jpg" %}" class="img-thumbnail preview-upload-image" alt="..."></div>
+              <div class="col-4"><img src="{% if userUploadImage %} {% static userUploadImage %} {% else %} {% static "admin/assets/img/example-image.jpg" %} {% endif %}" class="img-thumbnail preview-upload-image" alt="..."></div>
               <div class="col">
                 <div class = "col">
-                  <div class="input-group mb-3">
-                    <div class="custom-file">
-                      <input type="file" class="custom-file-input" id="inputGroupFile02" accept=".jpg,.gif,.png">
-                      <label class="custom-file-label" for="inputGroupFile02" aria-describedby="inputGroupFileAddon02">Choose file</label>
+                  <form method="POST" enctype="multipart/form-data">
+                    {%csrf_token%} 
+                    <div class="form-group">
+                      <div class="input-group mb-3">
+                        <div class="custom-file">
+                          <input type="file" class="custom-file-input" id="inputGroupFile02" name="inputFile" accept=".jpg,.png,.jpeg" multiple="multiple">
+                          <label class="custom-file-label" for="inputGroupFile02" aria-describedby="inputGroupFileAddon02">{% if userFileName %} {{ userFileName }} {% else %} Choose File {% endif %}</label>
+                        </div>
+                        <div class="input-group-append">
+                          <button class="btn btn-outline-secondary get-recommendation" id="btn-submit" disabled>Get Recommendation</button>
+                        </div>
+                      </div>
                     </div>
-                    <div class="input-group-append">
-                      <button class="btn btn-outline-secondary" type="button">Get Recommendation</button>
-                    </div>
-                  </div>
+                  </form>
                 </div>
 
                 <div class = "col">
                   <div class="card">
                     <div class="card-body">
-                      <h5 class="card-title text-dark">Deskripsi Hasil Analisis Kulit: </h5>
-                      {% comment %} <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6> {% endcomment %}
+                      <h5 class="card-title text-dark">RESULTS OF YOUR SKIN ANALYSIS: </h5>
+                      <h6 class="card-subtitle mb-2 text-muted" id="productCategory" hidden>{{productCategory}}</h6>
                       {% if skinDescription %}
-                      <p class="card-text">{{ skinDescription }}</p>
+                      <p class="card-text" id="skinDescription">{{ skinDescription }}</p>
                       {% else %}
-                      <p class="card-text text-secondary">no text</p>
+                      <p class="card-text text-secondary">No Result - Upload Your Skin Image First</p>
                       {% endif %}
                     </div>
                   </div>
@@ -98,15 +103,35 @@
               {% block content_title %}{% if title %}<h1 class="h3 mb-0 text-dark">{{ title }}</h1>{% endif %}{% endblock %}
             </div>
 
-            <div class = "row">
+            <div class = "row product-list">
               {% if products %}
                 {% for product in products %}
-                <div class="col mb-3">
-                  <div class="card" style="width: 18rem;">
-                    <img class="card-img-top" src="{% static product.imagePath %}" alt="Product Image">
+                {% comment %} <div class="col mb-3">
+                  <div class="card " style="width: 18rem;">
+                    <img class="card-img-top" src="{% if product.imagePath %}{{ product.imagePath }}{% else %}{% static product.defaultImage %}{% endif %}" alt="Product Image">
                     <div class="card-body">
                       <h5 class="card-title">{{ product.name }}</h5>
                       <p class="card-text">{{ product.description }}</p>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                      <li class="list-group-item">{{ product.price }}</li>
+                    </ul>
+                  </div>
+                </div> {% endcomment %}
+                <div class="card mb-3" style="max-width: 540px;">
+                  <div class="row no-gutters">
+                    <div class="col-md-4">
+                      <img class="card-img-top" src="{% if product.imagePath %}{{ product.imagePath }}{% else %}{% static product.defaultImage %}{% endif %}" alt="Product Image">
+                    </div>
+                    <div class="col-md-8">
+                      <div class="card-body">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="card-text">{{ product.description }}</p>
+                        <p class="card-text text-wrap">{% lorem %}</p>
+                        <ul class="list-group list-group-flush">
+                          <a class= "card-text" target="blank" href="{{ product.review }}">review</a>
+                        </ul>                      
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -117,6 +142,33 @@
             </div>
           </div>
         </section>
+        <div class = "d-flex justify-content-center">
+          <nav aria-label="Page navigation">
+            <ul class="pagination">
+              {% if products.has_previous %}
+                  <a class= "page-link" href="?category={{ productCategory }}&page=1&fileName={{ userFileName }}">&laquo; first</a>
+                  <li class="page-item">
+                    <a class="page-link" href="?category={{ productCategory }}&page={{ products.previous_page_number }}&fileName={{ userFileName }}" aria-label="Previous">
+                      <span aria-hidden="true">&laquo;</span>
+                    </a>
+                  </li>
+              {% endif %}
+              
+              {% for i in range %}
+              <li class="page-item"><a class="page-link" href="?category={{ productCategory }}&page={{ i }}&fileName={{ userFileName }}">{{ i }}</a></li>
+              {% endfor %}
+
+              {% if products.has_next %}
+                <li class="page-item">
+                  <a class="page-link" href="?category={{ productCategory }}&page={{ products.next_page_number }}&fileName={{ userFileName }}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                  </a>
+                </li>
+                <a class="page-link" href="?category={{ productCategory }}&page={{ products.paginator.num_pages }}&fileName={{ userFileName }}">last &raquo;</a>
+              {% endif %}              
+            </ul>
+          </nav>
+        </div>
       </div>
 
       
@@ -126,22 +178,9 @@
             <img src="{% static "assets/img/Logo-BINUS-University.jpg" %}" alt="Logo BINUS" width="100" height="70">
           </div>
           <div class="col footer-right d-flex flex-column">
-            <span class="">Daniel Febrianto</span>
-            <span class="">Ida Ayu Chintya Ardhya Nareswari</span>
-            <span class="">Junwin Cong</span>
-            {% comment %} <table class="table table-sm table-borderless align-items-center">
-              <tbody>
-                <tr>
-                  <td class="align-middle">Daniel Febrianto</td>
-                </tr>
-                <tr>
-                  <td class="align-middle">Ida Ayu Chintya Ardhya Nareswari</td>
-                </tr>
-                <tr>
-                  <td class="align-middle">Junwin Cong</td>
-                </tr>              
-              </tbody>
-            </table> {% endcomment %}
+            <span class="author">Daniel Febrianto</span>
+            <span class="author">Ida Ayu Chintya Ardhya Nareswari</span>
+            <span class="author">Junwin Cong</span>
           </div>
         </div>
       </footer>
@@ -152,6 +191,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.nicescroll/3.7.6/jquery.nicescroll.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+  
   <script>
     $('#inputGroupFile02').change(function(e){
       if (e.target.files) {
@@ -159,9 +199,68 @@
         var fileName = e.target.files[0].name;
         $('.custom-file-label').html(fileName);
         $('.preview-upload-image').attr("src", filePath);
+        $('.get-recommendation').removeAttr("disabled");
       }
     });
   </script>
+
+
+  <!-- Get Product By Page No -->
+  {% comment %} <script>
+    console.log($('.page-item').val())
+    $('.page-link').click(function(event){
+      event.preventDefault();
+      console.log("masuk page no ini")
+      var productCategory = $("#productCategory").val()
+      var pageNo = $(this).attr('href')
+
+      csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
+
+      $.ajax({
+        type:"POST",
+        url: pageNo,
+        data : {    
+					page_no : pageNo, 
+					csrfmiddlewaretoken: csrf_token,
+          category: productCategory
+				},
+        success: function (response) {
+          console.log("berhasil")
+          $('html, body').animate({
+            scrollTop: 0
+          }, 2);
+
+          $('.product-list').html('')
+          $.each(response.products, function(i, val) {
+            //append to product
+            $('.product-list').append(
+              `<div class="card mb-3" style="max-width: 540px;">
+                <div class="row no-gutters">
+                  <div class="col-md-4">
+                    <img class="card-img-top" src="` +  val.imagePath + `" alt="Product Image">
+                  </div>
+                  <div class="col-md-8">
+                    <div class="card-body">
+                      <h5 class="card-title">` + val.name + `</h5>
+                      <p class="card-text">` + val.description + `</p>
+                      <p class="card-text text-wrap"> test </p>
+                      <ul class="list-group list-group-flush">
+                        <a class= "card-text" target="blank" href="` + val.review + `">review</a>
+                      </ul>                      
+                    </div>
+                  </div>
+                </div>
+              </div>`
+            )
+          });
+        },
+        error: function () {
+					alert('Error Occured');
+				}
+      })
+    })
+  </script> {% endcomment %}
+
   <script src="{% static "admin/assets/js/scripts.js" %}"></script>
   <script src="{% static "admin/assets/js/custom.js" %}"></script>
     
