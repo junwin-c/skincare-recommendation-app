@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.http import JsonResponse
 from datetime import datetime
 from skincare_recommendation_app.models import Product
+from skincare_recommendation_app.models import Function
 from django.core.paginator import Paginator
 from django.shortcuts import redirect
 from django.core.files.storage import FileSystemStorage
@@ -22,6 +23,9 @@ def home(request):
         'name': 'Test',
         'date': datetime.now()
     })
+
+def about(request):
+    return render(request, "public/about.html", {})
 
 def user_product(request):
      # Get List Product
@@ -65,11 +69,24 @@ def user_home(request):
         products = Product.objects.filter(category__icontains=user_skin_condition)
 
         returnProduct = []
+        print("cek function id : ")
         for product in products:
+            functionId = product.function.split(";")
+            productFunction = []
+
+            for id in functionId:
+                if(id != ''):
+                    productFunction.append(Function.objects.get(pk=id).name)
+
+            productDescription = None
+            if (len(productFunction) > 0) :
+                productDescription = "This product is useful in dealing with <b> " + str(product.category.replace(";", ",")) + " </b> conditions. In addition, this product also has other benefits, namely for <b>" + ", ".join(productFunction) + "</b> "
+                # + str(",".join(','.join(l) for l in productFunction))
+
             temp = {
                     'name':product.name, 
                     'imagePath':product.image, 
-                    'description':product.price,
+                    'description':productDescription,
                     'price':product.price,
                     'review':product.review,
                     'defaultImage':'assets/img/Logo-BINUS-University.jpg'
@@ -113,10 +130,23 @@ def user_home(request):
 
         returnProduct = []
         for product in products:
+            functionId = product.function.split(";")
+            productFunction = []
+
+            for id in functionId:
+                if(id != ''):
+                    productFunction.append(Function.objects.get(pk=id).name)
+
+            productDescription = None
+            if (len(productFunction) > 0) :
+                productDescription = "This product is useful in dealing with <b> " + str(product.category.replace(";", ",")) + " </b> conditions. In addition, this product also has other benefits, namely for <b>" + ", ".join(productFunction) + "</b> "
+                # + str(",".join(','.join(l) for l in productFunction))
+
+
             temp = {
                     'name':product.name, 
                     'imagePath':product.image, 
-                    'description':product.price,
+                    'description':productDescription,
                     'price':product.price,
                     'review':product.review,
                     'defaultImage':'assets/img/Logo-BINUS-University.jpg'

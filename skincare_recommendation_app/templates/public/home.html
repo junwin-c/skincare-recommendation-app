@@ -2,7 +2,7 @@
 {% get_current_language as LANGUAGE_CODE %}{% get_current_language_bidi as LANGUAGE_BIDI %}
 <html lang="{{ LANGUAGE_CODE|default:"en-us" }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
 <head>
-  <title>{% block title %}{% endblock %}</title>
+  <title>Facial Skincare Recommendation App</title>
   <meta charset="UTF-8">
 
   <link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% static "admin/css/base.css" %}{% endblock %}">
@@ -23,7 +23,7 @@
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
   
   <!-- Template CSS -->
-  <link rel="stylesheet" href="{% static "assets/css/style.css" %}">
+  <link rel="stylesheet" type="text/css" href="{% static "assets/css/style.css" %}">
   <link rel="stylesheet" href="{% static "admin/assets/css/components.css" %}">
   <link rel="stylesheet" href="{% static "admin/assets/css/custom.css" %}">
   <link rel="stylesheet" href="{% static "admin/assets/css/extra.css" %}">
@@ -36,23 +36,22 @@
 
 {% load i18n %}
 
-<body class="">
-  <div class="navbar-bg"  style="color:#2B3A55;">
-  <nav class="navbar navbar-expand-md main-navbar bg-navbar">
-    <a class="navbar-brand" href="#">
-      <img src="{% static "assets/img/Logo-BINUS-University.jpg" %}" alt="Logo BINUS" width="100" height="80">
-    </a>
-    <div class="navbar-brand d-flex flex-fill justify-content-end ">
-      <span class="">Skincare Recommendation App</span>
-    </div>
-    <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
-      <div class="navbar-nav ">
-        <a class="nav-link active" aria-current="page" href="#">Home</a>
-        <a class="nav-link" href="#">About</a>
-        <a class="nav-link" href="#">Contact</a>
+<body>
+  <div class="navbar-bg mb-3 border border-bottom-1">
+    <nav class="navbar navbar-expand-md main-navbar bg-navbar">
+      <a class="navbar-brand" href="#">
+        <img src="{% static "assets/img/Logo-BINUS-University.jpg" %}" alt="Logo BINUS" width="100" height="80">
+      </a>
+      <div class="navbar-brand d-flex flex-fill justify-content-end ">
+        <span class="">Skincare Recommendation App</span>
       </div>
-    </div>
-  </nav>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
+        <div class="navbar-nav ">
+          <a class="nav-link active" aria-current="page" href="{% url 'home' %}">Home</a>
+          <a class="nav-link" href="/about">About</a>
+        </div>
+      </div>
+    </nav>
   </div>
 
   <div id="app">
@@ -89,7 +88,7 @@
                       <h5 class="card-title text-dark">RESULTS OF YOUR SKIN ANALYSIS: </h5>
                       <h6 class="card-subtitle mb-2 text-muted" id="productCategory" hidden>{{productCategory}}</h6>
                       {% if skinDescription %}
-                      <p class="card-text" id="skinDescription">{{ skinDescription }}</p>
+                      <h1 class="card-text" id="skinDescription">{{ skinDescription }}</h1>
                       {% else %}
                       <p class="card-text text-secondary">No Result - Upload Your Skin Image First</p>
                       {% endif %}
@@ -126,10 +125,10 @@
                     <div class="col-md-8">
                       <div class="card-body">
                         <h5 class="card-title">{{ product.name }}</h5>
-                        <p class="card-text">{{ product.description }}</p>
-                        <p class="card-text text-wrap">{% lorem %}</p>
+                        <p class="card-text">{{ product.price }}</p>
+                        <p class="card-text text-wrap">{% autoescape off %}{{ product.description }}{% endautoescape %}</p>
                         <ul class="list-group list-group-flush">
-                          <a class= "card-text" target="blank" href="{{ product.review }}">review</a>
+                          <a class= "card-text" target="blank" href="{{ product.review }}">Review</a>
                         </ul>                      
                       </div>
                     </div>
@@ -172,12 +171,13 @@
       </div>
 
       
-      <footer class="container main-footer">
-        <div class="row ">
+      <footer class="container main-footer border border-bottom-0 border-right-0 border-left-0" syle="position:relative">
+        <div class="row">
           <div class="col footer-left d-flex flex-row-reverse align-items-center border-right border-dark">
             <img src="{% static "assets/img/Logo-BINUS-University.jpg" %}" alt="Logo BINUS" width="100" height="70">
           </div>
           <div class="col footer-right d-flex flex-column">
+            <span><b>Credit</b>:</span>
             <span class="author">Daniel Febrianto</span>
             <span class="author">Ida Ayu Chintya Ardhya Nareswari</span>
             <span class="author">Junwin Cong</span>
