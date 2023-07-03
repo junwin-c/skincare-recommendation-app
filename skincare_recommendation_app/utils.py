@@ -20,6 +20,8 @@ def get_user_skin_condition(path):
     # load model 
     model = tf.keras.models.load_model('skincare_recommendation_app' + static('assets/ai_model/test1_model.h5'))
 
+    print(model.summary())
+
     # get the prediction
     img = np.expand_dims(img, axis=0)
     classes = ['Acne', 'Wrinkles', 'Blackhead']  

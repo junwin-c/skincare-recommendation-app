@@ -63,7 +63,8 @@
           <!-- Upload File -->
           <div class="container"> 
             <div class="row mb-5">
-              <div class="col-4"><img src="{% if userUploadImage %} {% static userUploadImage %} {% else %} {% static "admin/assets/img/example-image.jpg" %} {% endif %}" class="img-thumbnail preview-upload-image" alt="..."></div>
+              <div class="col-4"><img src="{% if userUploadImage %} {% static userUploadImage %} {% else %} 
+                {% static "admin/assets/img/example-image.jpg" %} {% endif %}" class="img-thumbnail preview-upload-image" alt="..."></div>
               <div class="col">
                 <div class = "col">
                   <form method="POST" enctype="multipart/form-data">
@@ -72,7 +73,8 @@
                       <div class="input-group mb-3">
                         <div class="custom-file">
                           <input type="file" class="custom-file-input" id="inputGroupFile02" name="inputFile" accept=".jpg,.png,.jpeg" multiple="multiple">
-                          <label class="custom-file-label" for="inputGroupFile02" aria-describedby="inputGroupFileAddon02">{% if userFileName %} {{ userFileName }} {% else %} Choose File {% endif %}</label>
+                          <label class="custom-file-label" for="inputGroupFile02" aria-describedby="inputGroupFileAddon02">{% if userFileName %} {{ userFileName }} 
+                            {% else %} Choose File {% endif %}</label>
                         </div>
                         <div class="input-group-append">
                           <button class="btn btn-outline-secondary get-recommendation" id="btn-submit" disabled>Get Recommendation</button>
@@ -105,22 +107,11 @@
             <div class = "row product-list">
               {% if products %}
                 {% for product in products %}
-                {% comment %} <div class="col mb-3">
-                  <div class="card " style="width: 18rem;">
-                    <img class="card-img-top" src="{% if product.imagePath %}{{ product.imagePath }}{% else %}{% static product.defaultImage %}{% endif %}" alt="Product Image">
-                    <div class="card-body">
-                      <h5 class="card-title">{{ product.name }}</h5>
-                      <p class="card-text">{{ product.description }}</p>
-                    </div>
-                    <ul class="list-group list-group-flush">
-                      <li class="list-group-item">{{ product.price }}</li>
-                    </ul>
-                  </div>
-                </div> {% endcomment %}
                 <div class="card mb-3" style="max-width: 540px;">
                   <div class="row no-gutters">
                     <div class="col-md-4">
-                      <img class="card-img-top" src="{% if product.imagePath %}{{ product.imagePath }}{% else %}{% static product.defaultImage %}{% endif %}" alt="Product Image">
+                      <img class="card-img-top" src="{% if product.imagePath %}{{ product.imagePath }}{% else %}{% static product.defaultImage %}{% endif %}" 
+                      alt="Product Image">
                     </div>
                     <div class="col-md-8">
                       <div class="card-body">
@@ -203,63 +194,6 @@
       }
     });
   </script>
-
-
-  <!-- Get Product By Page No -->
-  {% comment %} <script>
-    console.log($('.page-item').val())
-    $('.page-link').click(function(event){
-      event.preventDefault();
-      console.log("masuk page no ini")
-      var productCategory = $("#productCategory").val()
-      var pageNo = $(this).attr('href')
-
-      csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
-
-      $.ajax({
-        type:"POST",
-        url: pageNo,
-        data : {    
-					page_no : pageNo, 
-					csrfmiddlewaretoken: csrf_token,
-          category: productCategory
-				},
-        success: function (response) {
-          console.log("berhasil")
-          $('html, body').animate({
-            scrollTop: 0
-          }, 2);
-
-          $('.product-list').html('')
-          $.each(response.products, function(i, val) {
-            //append to product
-            $('.product-list').append(
-              `<div class="card mb-3" style="max-width: 540px;">
-                <div class="row no-gutters">
-                  <div class="col-md-4">
-                    <img class="card-img-top" src="` +  val.imagePath + `" alt="Product Image">
-                  </div>
-                  <div class="col-md-8">
-                    <div class="card-body">
-                      <h5 class="card-title">` + val.name + `</h5>
-                      <p class="card-text">` + val.description + `</p>
-                      <p class="card-text text-wrap"> test </p>
-                      <ul class="list-group list-group-flush">
-                        <a class= "card-text" target="blank" href="` + val.review + `">review</a>
-                      </ul>                      
-                    </div>
-                  </div>
-                </div>
-              </div>`
-            )
-          });
-        },
-        error: function () {
-					alert('Error Occured');
-				}
-      })
-    })
-  </script> {% endcomment %}
 
   <script src="{% static "admin/assets/js/scripts.js" %}"></script>
   <script src="{% static "admin/assets/js/custom.js" %}"></script>
