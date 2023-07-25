@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'skincare_recommendation_app',
     'widget_tweaks',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
